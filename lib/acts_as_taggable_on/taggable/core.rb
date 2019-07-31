@@ -50,7 +50,7 @@ module ActsAsTaggableOn::Taggable
               parsed_new_list = ActsAsTaggableOn.default_parser.new(new_tags).parse
 
               if self.class.preserve_tag_order? || parsed_new_list.sort != #{tag_type}_list.sort
-                set_attribute_was('#{tag_type}_list', #{tag_type}_list)
+                set_attribute_was('#{tag_type}_list')
                 write_attribute("#{tag_type}_list", parsed_new_list)
               end
 
@@ -62,6 +62,11 @@ module ActsAsTaggableOn::Taggable
             end
 
             private
+
+            def set_attribute_was(attr)
+              mutations_from_database.change_to_attribute(attr)
+            end
+
             def dirtify_tag_list(tagging)
               attribute_will_change! tagging.context.singularize+"_list"
             end
